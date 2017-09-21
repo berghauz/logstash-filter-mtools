@@ -23,7 +23,7 @@ class LogStash::Filters::Mtools < LogStash::Filters::Base
   config :extractrn, :validate => :array
 
   # RN regex patterns
-  config :rn_pattern, :validate => :array, :default => ['^C\d{6}','^D\d{4}','^E[A-Z]{1}\d{3}','^E\d{2}','^B\d{4}']
+  config :rn_pattern, :validate => :array, :default => ['^C\d{7}','^D\d{4}','^E[A-Z]{1}\d{3}','^E\d{2}','^B\d{4}']
 
   public
   def register
