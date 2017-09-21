@@ -19,6 +19,12 @@ class LogStash::Filters::Mtools < LogStash::Filters::Base
   # The message field to detect nonascii chars
   config :inspect_ascii, :validate => :string
   
+  # The array of numbers to extract rn form
+  config :extractrn, :validate => :array
+
+  # RN regex patterns
+  config :rn_pattern, :validate => :array, :default => ['^C\d{6}','^D\d{4}','^E[A-Z]{1}\d{3}','^E\d{2}','^B\d{4}']
+
   public
   def register
   end # def register
@@ -26,11 +32,34 @@ class LogStash::Filters::Mtools < LogStash::Filters::Base
   public
   def filter(event)
     pn_to_array(event) if @pnumbers
+    extract_rn(event) if @extractrn
     str_to_ipstr(event) if @ipaddress
     drop_if_nonascii(event) if@inspect_ascii
     filter_matched(event)
   end # def filter
 
+  private
+  def extract_rn(event)
+    if @extractrn
+      extractrn.each do |pn|
+	field = event.get(pn)
+	if !field.nil?
+	  if !field["number"].nil?
+	    @rn_pattern.each do |pattern|
+	      rn = field["number"].match(pattern)
+	      if !rn.nil?
+		field["rn"] = "#{rn}"
+		field["number"].slice! field["rn"]
+		event.set(pn, field)
+	      end
+	    end
+	  end
+	end
+      end
+    else
+      logger.fatal("No extractrn array provided")
+    end
+  end # def extract_rn
 
   private
   def pn_to_array(event)
@@ -68,9 +97,7 @@ class LogStash::Filters::Mtools < LogStash::Filters::Base
     if @ipaddress
       @ipaddress.each do |ip|
 	if !ip.nil?
-	  #if ipstr = event.get(ip)
 	  strip = IPAddr.new(event.get(ip).to_i(16),Socket::AF_INET)
-	  #logger.warn("ERR",:ip => ip, :eventval=> event.get(ip), :str=>"#{strip}")
 	  event.set(ip, IPAddr.new(event.get(ip).to_i(16),Socket::AF_INET).to_s)
 	end
       end
