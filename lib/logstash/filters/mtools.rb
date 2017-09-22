@@ -71,6 +71,9 @@ class LogStash::Filters::Mtools < LogStash::Filters::Base
 	  if pn_arr.size > 2
 	    new_field = {"type"=>"#{pn_arr[0]}", "class"=>"#{pn_arr[1]}", "number"=>"#{pn_arr[2]}"}
 	    event.set(pn, new_field)
+	  elsif if pn_arr.size = 2
+	    new_field = {"type"=>"#{pn_arr[0]}", "class"=>"#{pn_arr[1]}", "number"=>"error"}
+	    event.set(pn, new_field)
 	  elsif pn_arr.size == 1
 	    new_field = {"number"=>"#{pn_arr[0]}"}
 	    event.set(pn, new_field)
