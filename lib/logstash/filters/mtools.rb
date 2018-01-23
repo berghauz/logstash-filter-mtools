@@ -51,6 +51,7 @@ class LogStash::Filters::Mtools < LogStash::Filters::Base
 		field["rn"] = "#{rn}"
 		field["number"].slice! field["rn"]
 		event.set(pn, field)
+		break
 	      end
 	    end
 	  end
