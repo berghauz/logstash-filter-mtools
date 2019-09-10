@@ -69,7 +69,10 @@ class LogStash::Filters::Mtools < LogStash::Filters::Base
 	attr = event.get(pn)
 	if !attr.nil?
 	  pn_arr = attr.split(@terminator)
-	  if pn_arr.size > 2
+	  if pn_arr.size == 4
+	    new_field = {"screenInd"=>"#{pn_arr[0]}", "type"=>"#{pn_arr[1]}", "class"=>"#{pn_arr[2]}", "number"=>"#{pn_arr[3]}"}
+	    event.set(pn, new_field)
+	  elsif pn_arr.size == 3
 	    new_field = {"type"=>"#{pn_arr[0]}", "class"=>"#{pn_arr[1]}", "number"=>"#{pn_arr[2]}"}
 	    event.set(pn, new_field)
 	  elsif pn_arr.size == 2
@@ -77,6 +80,9 @@ class LogStash::Filters::Mtools < LogStash::Filters::Base
 	    event.set(pn, new_field)
 	  elsif pn_arr.size == 1
 	    new_field = {"number"=>"#{pn_arr[0]}"}
+	    event.set(pn, new_field)
+	  elsif pn_arr.size > 4
+	    new_field = {"number"=>"error"}
 	    event.set(pn, new_field)
 	  end
         end
