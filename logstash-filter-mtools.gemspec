@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'logstash-filter-mtools'
-  s.version       = '0.1.0'
+  s.version       = '0.1.1'
   s.licenses      = ['Apache-2.0']
   s.summary       = 'The party number parser.'
   s.description   = 'This filter allow to parse party number values from Protey GMSC cdrs and put it in a nested structure.'
